@@ -14,11 +14,15 @@
  * limitations under the License.
  */
 
-package android.hardware.power.stats;
+package android.hardware.tetheroffload.control@1.1;
 
-@VintfStability
-@Backing(type="int")
-enum EnergyConsumerId {
-    DISPLAY = 0,
-    GPS = 1,
-}
+import @1.0::OffloadCallbackEvent;
+
+enum OffloadCallbackEvent : @1.0::OffloadCallbackEvent {
+    /**
+     * This event is fired when the quota, applied in setDataWarning, has expired. It is
+     * recommended that the client query for statistics immediately after receiving this event.
+     * Note that hardware acceleration must not be stopped upon receiving this event.
+     */
+    OFFLOAD_WARNING_REACHED = 6,
+};

@@ -287,7 +287,7 @@
     </hal>
     <hal format="aidl" optional="true">
         <name>android.hardware.identity</name>
-        <version>1-2</version>
+        <version>1-3</version>
         <interface>
             <name>IIdentityCredentialStore</name>
             <instance>default</instance>
@@ -525,7 +525,7 @@
     </hal>
     <hal format="hidl" optional="true">
         <name>android.hardware.tetheroffload.control</name>
-        <version>1.0</version>
+        <version>1.1</version>
         <interface>
             <name>IOffloadControl</name>
             <instance>default</instance>
