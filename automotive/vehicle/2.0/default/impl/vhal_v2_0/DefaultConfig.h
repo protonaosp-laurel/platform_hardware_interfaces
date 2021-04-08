@@ -1064,6 +1064,16 @@ const ConfigDeclaration kVehicleProperties[]{
                     .changeMode = VehiclePropertyChangeMode::ON_CHANGE},
          .initialValue = {.stringValue = "Vendor String Property"}},
 
+        {.config = {.prop = toInt(VehicleProperty::ELECTRONIC_TOLL_COLLECTION_CARD_TYPE),
+                    .access = VehiclePropertyAccess::READ,
+                    .changeMode = VehiclePropertyChangeMode::ON_CHANGE},
+         .initialValue = {.int32Values = {0}}},
+
+        {.config = {.prop = toInt(VehicleProperty::ELECTRONIC_TOLL_COLLECTION_CARD_STATUS),
+                    .access = VehiclePropertyAccess::READ,
+                    .changeMode = VehiclePropertyChangeMode::ON_CHANGE},
+         .initialValue = {.int32Values = {0}}},
+
         {.config =
                  {
                          .prop = toInt(VehicleProperty::SUPPORT_CUSTOMIZE_VENDOR_PERMISSION),
@@ -1149,6 +1159,22 @@ const ConfigDeclaration kVehicleProperties[]{
         {
                 .config =
                         {
+                                .prop = toInt(VehicleProperty::UNIX_TIME),
+                                .access = VehiclePropertyAccess::READ_WRITE,
+                                .changeMode = VehiclePropertyChangeMode::ON_CHANGE,
+                        },
+        },
+        {
+                .config =
+                        {
+                                .prop = toInt(VehicleProperty::STORAGE_ENCRYPTION_BINDING_SEED),
+                                .access = VehiclePropertyAccess::READ_WRITE,
+                                .changeMode = VehiclePropertyChangeMode::ON_CHANGE,
+                        },
+        },
+        {
+                .config =
+                        {
                                 .prop = toInt(VehicleProperty::WATCHDOG_ALIVE),
                                 .access = VehiclePropertyAccess::WRITE,
                                 .changeMode = VehiclePropertyChangeMode::ON_CHANGE,
@@ -1206,7 +1232,7 @@ const ConfigDeclaration kVehicleProperties[]{
         {
                 .config =
                         {
-                                .prop = toInt(VehicleProperty::CLUSTER_NAVIGATION_STATE_LEGACY),
+                                .prop = toInt(VehicleProperty::CLUSTER_NAVIGATION_STATE),
                                 .access = VehiclePropertyAccess::WRITE,
                                 .changeMode = VehiclePropertyChangeMode::ON_CHANGE,
                         },
