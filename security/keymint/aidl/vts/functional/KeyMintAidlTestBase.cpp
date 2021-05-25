@@ -44,7 +44,9 @@ using std::unique_ptr;
 using ::testing::AssertionFailure;
 using ::testing::AssertionResult;
 using ::testing::AssertionSuccess;
+using ::testing::ElementsAreArray;
 using ::testing::MatchesRegex;
+using ::testing::Not;
 
 ::std::ostream& operator<<(::std::ostream& os, const AuthorizationSet& set) {
     if (set.size() == 0)
@@ -124,10 +126,10 @@ char nibble2hex[16] = {'0', '1', '2', '3', '4', '5', '6', '7',
 // Attestations don't contain everything in key authorization lists, so we need to filter the key
 // lists to produce the lists that we expect to match the attestations.
 auto kTagsToFilter = {
-        Tag::CREATION_DATETIME,        //
-        Tag::EC_CURVE,
-        Tag::HARDWARE_TYPE,
-        Tag::INCLUDE_UNIQUE_ID,
+    Tag::CREATION_DATETIME,
+    Tag::EC_CURVE,
+    Tag::HARDWARE_TYPE,
+    Tag::INCLUDE_UNIQUE_ID,
 };
 
 AuthorizationSet filtered_tags(const AuthorizationSet& set) {
@@ -1185,6 +1187,14 @@ vector<uint8_t> build_serial_blob(const uint64_t serial_int) {
         return {};
     }
 
+    if (serial_blob.empty() || serial_blob[0] & 0x80) {
+        // An empty blob is OpenSSL's encoding of the zero value; we need single zero byte.
+        // Top bit being set indicates a negative number in two's complement, but our input
+        // was positive.
+        // In either case, prepend a zero byte.
+        serial_blob.insert(serial_blob.begin(), 0x00);
+    }
+
     return serial_blob;
 }
 
@@ -1540,14 +1550,17 @@ void check_maced_pubkey(const MacedPublicKey& macedPubKey, bool testMode,
     EXPECT_EQ(extractedTag.size(), 32U);
 
     // Compare with tag generated with kTestMacKey.  Should only match in test mode
-    auto testTag = cppcose::generateCoseMac0Mac(remote_prov::kTestMacKey, {} /* external_aad */,
-                                                payload->value());
+    auto macFunction = [](const cppcose::bytevec& input) {
+        return cppcose::generateHmacSha256(remote_prov::kTestMacKey, input);
+    };
+    auto testTag =
+            cppcose::generateCoseMac0Mac(macFunction, {} /* external_aad */, payload->value());
     ASSERT_TRUE(testTag) << "Tag calculation failed: " << testTag.message();
 
     if (testMode) {
-        EXPECT_EQ(*testTag, extractedTag);
+        EXPECT_THAT(*testTag, ElementsAreArray(extractedTag));
     } else {
-        EXPECT_NE(*testTag, extractedTag);
+        EXPECT_THAT(*testTag, Not(ElementsAreArray(extractedTag)));
     }
     if (payload_value != nullptr) {
         *payload_value = payload->value();
